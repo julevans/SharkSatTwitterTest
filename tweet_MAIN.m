@@ -71,5 +71,6 @@ for i = 1:nrows
     
 end
 
-%% 
+%% Reorder the commands for shortest distance pointing
+
 
