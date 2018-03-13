@@ -73,4 +73,42 @@ end
 
 %% Reorder the commands for shortest distance pointing
 
+%get initial condition of satellite (assume pointing at 0,0 )
+%NOTE: hardcoded!!!!
+latInit = 0;
+lonInit = 0;
 
+%instantiate old values
+oldlat = latInit;    
+oldlon = lonInit;    
+
+%initialize temporary Ulat and Ulon vectors (so we don't mess up the originals)
+tempUlat = str2double(Ulat(:));
+tempUlon = str2double(Ulon(:));
+
+for j = 1:nrows
+
+    %calculate distances for each entry of tempU-vecs
+    dHav = []; %set as empty to prevent indexing issues
+    for k = 1:length(tempUlat)
+    %go through tempUlat/Ulon list and calculate distances
+    [dHav(k)] = latlonDIST(oldlat,oldlon,tempUlat(k),tempUlon(k));
+    end
+    
+%get the minimum and the index
+[minval, idxval] = min(dHav);
+
+%set this value as the next entry in 'newlist'
+newlistLAT(j) = tempUlat(idxval);
+newlistLON(j) = tempUlon(idxval);
+
+%update oldlat and oldlon
+oldlat = tempUlat(idxval);
+oldlon = tempUlon(idxval);
+
+%remove the entry from the temp vectors
+tempUlat(idxval) = [];
+tempUlon(idxval) = [];
+
+
+end

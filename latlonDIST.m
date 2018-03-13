@@ -1,4 +1,4 @@
-function [dHav, dPyt]=latlonDIST(lat1,lon1,lat2,lon2)
+function [dHav]=latlonDIST(lat1,lon1,lat2,lon2)
 %modified from MATLAB script by M. Sohrabinia
 %Inputs:
 %   latlon1: latlon of origin point [lat lon]
@@ -12,10 +12,10 @@ function [dHav, dPyt]=latlonDIST(lat1,lon1,lat2,lon2)
 radius=6371; %[km]
 
 %convert strings to doubles
-lat1 = str2double(lat1);
-lon1 = str2double(lon1);
-lat2 = str2double(lat2);
-lon2 = str2double(lon2);
+%lat1 = str2double(lat1);
+%lon1 = str2double(lon1);
+%lat2 = str2double(lat2);
+%lon2 = str2double(lon2);
 
 %lat points (convert to radians)
 lat1=lat1*pi/180;
@@ -33,10 +33,5 @@ deltaLon=lon2-lon1;
 a=sin((deltaLat)/2)^2 + cos(lat1)*cos(lat2) * sin(deltaLon/2)^2;
 c=2*atan2(sqrt(a),sqrt(1-a));
 dHav=radius*c;   
-
-%Pythagorean distance
-x=deltaLon*cos((lat1+lat2)/2);
-y=deltaLat;
-dPyt=radius*sqrt(x*x + y*y); 
 
 end
