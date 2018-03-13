@@ -95,7 +95,7 @@ for j = 1:nrows
     [dHav(k)] = latlonDIST(oldlat,oldlon,tempUlat(k),tempUlon(k));
     end
     
-%get the minimum and the index
+%get the minimum distance and the index
 [minval, idxval] = min(dHav);
 
 %set this value as the next entry in 'newlist'
@@ -110,5 +110,24 @@ oldlon = tempUlon(idxval);
 tempUlat(idxval) = [];
 tempUlon(idxval) = [];
 
-
 end
+
+%% Put together new list of tweets
+
+newCellstruc = cell(length(newlistLAT),3);
+
+for m = 1:length(newlistLAT)
+    
+    %write values to new cell table
+    newCellstruc{m,1} = m;
+    newCellstruc{m,2} = newlistLAT(m);
+    newCellstruc{m,3} = newlistLON(m);
+    
+end
+
+newTable = cell2table(newCellstruc, 'VariableNames', {'cmd_num', 'latitude', 'longitude'});
+
+%% Write new table to excel sheet
+
+writetable(newTable,'reorderedLatLon.xlsx');
+
