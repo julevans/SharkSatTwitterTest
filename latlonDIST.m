@@ -17,6 +17,7 @@ radius=6371; %[km]
 %lat2 = str2double(lat2);
 %lon2 = str2double(lon2);
 
+
 %lat points (convert to radians)
 lat1=lat1*pi/180;
 lat2=lat2*pi/180;

@@ -27,6 +27,9 @@ classdef tweetObj
         Uyear;
         Umonth;
         Uday;
+        
+        %Orbit Value
+        OrbitVal;
       
     end
 end

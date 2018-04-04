@@ -1,6 +1,8 @@
 %% Twitter Analysis Code
-% Julianna M. Evans
-% 03.11.2018
+% Author: Julianna M. Evans
+% Date: 03.11.2018
+% Last Rev: 04.03.2018
+
 
 %clear statements
 clc; clear;
@@ -71,61 +73,101 @@ for i = 1:nrows
     
 end
 
-%% Reorder the commands for shortest distance pointing
+%% Import coordinates and set orbit numbers
+% Calculated using "Orbital_Library" scripts.
+% the loaded object is the Lat and Long coordinate vectors
+load('coords_sharksat.mat')
 
-%get initial condition of satellite (assume pointing at 0,0 )
-%NOTE: hardcoded!!!!
-latInit = 0;
-lonInit = 0;
+coordData = ones(length(Lat),3);
+coordData(:,2) = Lat;
+coordData(:,3) = Long;
+% Assign the coordinates to an orbit number and store in a coordinate matrix
+orbitNum = 1;
+oldVal = 0;
+for i = 1:length(Lat)
 
-%instantiate old values
-oldlat = latInit;    
-oldlon = lonInit;    
-
-%initialize temporary Ulat and Ulon vectors (so we don't mess up the originals)
-tempUlat = str2double(Ulat(:));
-tempUlon = str2double(Ulon(:));
-
-for j = 1:nrows
-
-    %calculate distances for each entry of tempU-vecs
-    dHav = []; %set as empty to prevent indexing issues
-    for k = 1:length(tempUlat)
-    %go through tempUlat/Ulon list and calculate distances
-    [dHav(k)] = latlonDIST(oldlat,oldlon,tempUlat(k),tempUlon(k));
+    if (0<i && i<=93)
+        coordData(i,1)= 1; %Orbit 1
     end
-    
-%get the minimum distance and the index
-[minval, idxval] = min(dHav);
-
-%set this value as the next entry in 'newlist'
-newlistLAT(j) = tempUlat(idxval);
-newlistLON(j) = tempUlon(idxval);
-
-%update oldlat and oldlon
-oldlat = tempUlat(idxval);
-oldlon = tempUlon(idxval);
-
-%remove the entry from the temp vectors
-tempUlat(idxval) = [];
-tempUlon(idxval) = [];
-
+    if (94<=i && i<=186)
+        coordData(i,1)= 2; %Orbit 2
+    end
+    if (187<=i && i<=279)
+        coordData(i,1)= 3; %Orbit 3
+    end
+    if (280<=i && i<=371)
+        coordData(i,1)= 4; %Orbit 4
+    end
+    if (372<=i && i<=464)
+        coordData(i,1)= 5; %Orbit 5
+    end
+    if (465<=i && i<=557)
+        coordData(i,1)= 6; %Orbit 6
+    end 
+    if (558<=i && i<=650)
+        coordData(i,1)= 7; %Orbit 7
+    end
+    if (651<=i && i<=743)
+        coordData(i,1)= 8; %Orbit 8
+    end
+    if (744<=i && i<=835)
+        coordData(i,1)= 9; %Orbit 9
+    end
+    if (836<=i && i<=928)
+        coordData(i,1)= 10; %Orbit 10
+    end
+    if (929<=i && i<=1020)
+        coordData(i,1)= 11; %Orbit 11
+    end
+    if (1021<=i && i<=1113)
+        coordData(i,1)= 12; %Orbit 12
+    end
+    if (1114<=i && i<=1206)
+        coordData(i,1)= 13; %Orbit 13
+    end
+    if (1207<=i && i<=1299)
+        coordData(i,1)= 14; %Orbit 14
+    end
+    if (1300<=i && i<=1391)
+        coordData(i,1)= 15; %Orbit 15
+    end
+    if (1392<=i && i<=1441)
+        coordData(i,1)= 16; %Orbit 16
+    end
 end
 
-%% Put together new list of tweets
+%% Determine closest orbit for each point
 
-newCellstruc = cell(length(newlistLAT),3);
+for i = 1:length(tweet)
+    
+    %latlon point of interest
+    myLat = str2double(tweet(i).Ulat);
+    myLon = str2double(tweet(i).Ulon);
+    
+    %call function to determine which orbit is best
+    [orbitNumVal] = getOrbit(coordData, myLat, myLon);
+    
+    %store orbit value into tweet object
+    tweet(i).OrbitVal = orbitNumVal;
+    
+end
 
-for m = 1:length(newlistLAT)
+
+%% Put together new table of tweets
+
+newCellstruc = cell(length(tweet),3);
+
+for m = 1:length(tweet)
     
     %write values to new cell table
     newCellstruc{m,1} = m;
-    newCellstruc{m,2} = newlistLAT(m);
-    newCellstruc{m,3} = newlistLON(m);
+    newCellstruc{m,2} = tweet(m).OrbitVal;
+    newCellstruc{m,3} = tweet(m).Ulat;
+    newCellstruc{m,4} = tweet(m).Ulon;
     
 end
 
-newTable = cell2table(newCellstruc, 'VariableNames', {'cmd_num', 'latitude', 'longitude'});
+newTable = cell2table(newCellstruc, 'VariableNames', {'cmd_num', 'orbit','latitude', 'longitude'});
 
 %% Write new table to excel sheet
 
